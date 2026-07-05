@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #fbfaf6;
+  --ink: #16140f;
+  --sub: #55504a;
+  --muted: #7a746b;
+  --faint: #a49d90;
+  --line: #d8d2c6;
+  --card-line: #e2dccf;
+  --warm-1: #f4f0e7;
+  --warm-2: #f5f1e8;
+  --chrome: #e9e4da;
+  --red: #c0341d;
+  --green: #0d6b39;
+  --amber: #b07a17;
+  --blue: #21506b;
+  --slack: #4a154b;
+  --avatar-grad: linear-gradient(150deg, #21506b, #16303f);
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-sub: var(--sub);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-card-line: var(--card-line);
+  --color-warm-1: var(--warm-1);
+  --color-warm-2: var(--warm-2);
+  --color-chrome: var(--chrome);
+  --color-red: var(--red);
+  --color-green: var(--green);
+  --color-amber: var(--amber);
+  --color-blue: var(--blue);
+  --color-slack: var(--slack);
+
+  --font-display: var(--font-fraunces);
+  --font-serif: var(--font-source-serif);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
+}
+
+html,
+body {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.stripe-placeholder {
+  background-image: repeating-linear-gradient(
+    45deg,
+    #efeade,
+    #efeade 7px,
+    #e6e0d2 7px,
+    #e6e0d2 14px
+  );
+}
+
+.avatar-grad {
+  background: var(--avatar-grad);
+}
+
+.shadow-desktop {
+  box-shadow: 0 44px 84px -30px rgba(0, 0, 0, 0.45);
+}
+
+.shadow-phone {
+  box-shadow: 0 34px 66px -22px rgba(0, 0, 0, 0.5);
+}
+
+.kicker {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--red);
+  text-transform: uppercase;
+}
+
+.mono-label {
+  font-family: var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@keyframes loading-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(60%);
+  }
+  100% {
+    transform: translateX(220%);
+  }
+}
+
+.loading-bar-fill {
+  animation: loading-slide 1.4s ease-in-out infinite;
+}

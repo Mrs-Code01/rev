@@ -24,7 +24,7 @@ export function Button({
 }: ButtonProps) {
   return (
     <button
-      className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl px-5 py-4 font-sans text-[15px] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+      className={`inline-flex min-h-[48px] cursor-pointer items-center justify-center gap-2 rounded-xl px-5 py-4 font-sans text-[15px] font-semibold transition-all duration-100 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 ${
         VARIANT_CLASSES[variant]
       } ${fullWidth ? "w-full" : ""} ${className}`}
       {...props}

@@ -85,7 +85,7 @@ export default async function FreshInkPage() {
               </div>
             </>
           ) : (
-            <LockedSection dayName="Tue" timeLabel={`in ${tuesday.countdownLabel}`} />
+            <LockedSection fullDayName="Tuesday" countdownLabel={tuesday.countdownLabel ?? ""} />
           )}
         </div>
       </div>

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { choosePace } from "@/app/actions/onboarding";
 import { Button } from "@/components/Button";
+import { Toast } from "@/components/Toast";
 import type { Pace } from "@/lib/types";
 
 function SegmentBar({ tone }: { tone: "daily" | "weekly" }) {
@@ -42,8 +43,8 @@ function PaceCard({
     <button
       type="button"
       onClick={onSelect}
-      className={`flex-1 rounded-2xl border-2 bg-white p-5 text-left transition-colors ${
-        selected ? "border-ink" : "border-line"
+      className={`flex-1 cursor-pointer rounded-2xl border-2 bg-white p-5 text-left transition-all duration-100 active:scale-[0.98] ${
+        selected ? "border-ink" : "border-line hover:border-faint"
       }`}
     >
       <div className="flex items-start justify-between gap-3">
@@ -80,13 +81,25 @@ export function PaceForm({
   submitLabel?: string;
 }) {
   const [pace, setPace] = useState<Pace>(initialPace);
+  const [announce, setAnnounce] = useState<string | null>(null);
+
+  function select(next: Pace) {
+    setPace(next);
+    setAnnounce(next === "daily" ? "Daily news selected" : "Weekly news selected");
+  }
+
+  useEffect(() => {
+    if (!announce) return;
+    const timer = setTimeout(() => setAnnounce(null), 2000);
+    return () => clearTimeout(timer);
+  }, [announce]);
 
   return (
     <form action={choosePace} className="mt-8 flex flex-col gap-6">
       <div className="flex flex-col gap-4 lg:flex-row">
         <PaceCard
           selected={pace === "daily"}
-          onSelect={() => setPace("daily")}
+          onSelect={() => select("daily")}
           title="Daily reveal"
           description="One section unlocks each day, Mon–Wed. We'll ping you when the next is ready."
           monoLabel="MON · TUE · WED"
@@ -95,7 +108,7 @@ export function PaceForm({
         />
         <PaceCard
           selected={pace === "weekly"}
-          onSelect={() => setPace("weekly")}
+          onSelect={() => select("weekly")}
           title="Read it all now"
           description="All three days, unlocked at once — read at your own pace."
           monoLabel="ALL 3 DAYS · UNLOCKED"
@@ -107,6 +120,7 @@ export function PaceForm({
       <Button type="submit" variant="primary">
         {submitLabel}
       </Button>
+      <Toast message={announce ?? ""} show={Boolean(announce)} />
     </form>
   );
 }

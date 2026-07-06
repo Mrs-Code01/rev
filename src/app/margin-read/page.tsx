@@ -63,7 +63,7 @@ export default async function MarginReadPage() {
               </div>
             </div>
           ) : (
-            <LockedSection dayName="Wed" timeLabel={`in ${wednesday.countdownLabel}`} />
+            <LockedSection fullDayName="Wednesday" countdownLabel={wednesday.countdownLabel ?? ""} />
           )}
         </div>
       </div>

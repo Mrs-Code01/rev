@@ -67,9 +67,6 @@ export default async function HomeBasePage() {
             >
               This week&apos;s edition
             </Link>
-            <span className="cursor-default rounded-lg px-3 py-2.5 font-sans text-sm font-medium text-[#7a7468]">
-              Archive
-            </span>
             <Link
               href="/settings"
               className="rounded-lg px-3 py-2.5 font-sans text-sm font-medium text-[#a49d90] hover:bg-white/10 hover:text-paper"

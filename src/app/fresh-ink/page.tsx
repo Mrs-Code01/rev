@@ -21,13 +21,15 @@ export default async function FreshInkPage() {
   const edition = await getCurrentEdition(session.unitId);
   if (!edition) redirect("/home");
 
-  const pace = await getReaderPace(session.userId, edition.id);
+  const [pace, items] = await Promise.all([
+    getReaderPace(session.userId, edition.id),
+    getFreshInk(edition.id),
+  ]);
   if (!pace) redirect("/onboarding/pace");
 
   const days = getDayStates(getEditionMonday(edition), pace);
   const tuesday = days[1];
   const wednesday = days[2];
-  const items = await getFreshInk(edition.id);
 
   return (
     <div className="min-h-screen bg-paper px-6 py-8">

@@ -37,6 +37,15 @@ export function getEditionMonday(edition: Edition): Date {
   return new Date(edition.publishedAt);
 }
 
+export async function getFlaggedHomeCount(editionId: string): Promise<number> {
+  const supabase = await createClient();
+  const { count } = await supabase
+    .from("flagged_homes")
+    .select("id", { count: "exact", head: true })
+    .eq("edition_id", editionId);
+  return count ?? 0;
+}
+
 export async function getFlaggedHomes(editionId: string): Promise<FlaggedHome[]> {
   const supabase = await createClient();
   const { data } = await supabase

@@ -1,8 +1,9 @@
 import "server-only";
+import { cache } from "react";
 import { createClient } from "./supabase/server";
 import type { Session } from "./types";
 
-export async function getSession(): Promise<Session | null> {
+export const getSession = cache(async (): Promise<Session | null> => {
   const supabase = await createClient();
   const {
     data: { user },
@@ -23,4 +24,4 @@ export async function getSession(): Promise<Session | null> {
     unitId: profile.unit_id,
     avatarUrl: profile.avatar_url,
   };
-}
+});

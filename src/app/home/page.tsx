@@ -2,7 +2,14 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/lib/session";
 import { getUnit } from "@/lib/units";
-import { getCurrentEdition, getEditionMonday, getPulse, getReaderPace } from "@/lib/content";
+import {
+  getCurrentEdition,
+  getEditionMonday,
+  getFlaggedHomeCount,
+  getPulse,
+  getReaderPace,
+  SILENT_HOME_COUNT,
+} from "@/lib/content";
 import { getDayStates } from "@/lib/unlock";
 import { Avatar } from "@/components/Avatar";
 import { Wordmark } from "@/components/Wordmark";
@@ -32,9 +39,10 @@ export default async function HomeBasePage() {
     );
   }
 
-  const [pace, pulse] = await Promise.all([
+  const [pace, pulse, flaggedCount] = await Promise.all([
     getReaderPace(session.userId, edition.id),
     getPulse(edition.id),
+    getFlaggedHomeCount(edition.id),
   ]);
   const days = getDayStates(getEditionMonday(edition), pace ?? "daily");
   const monday = getEditionMonday(edition);
@@ -91,12 +99,22 @@ export default async function HomeBasePage() {
           <p className="mono-label mt-5 font-mono text-[11px] text-muted">Managing unit</p>
           <h1 className="mt-1 font-display text-[30px] font-semibold text-ink">{unit.name}</h1>
           <p className="mt-1 font-serif text-[15px] text-sub">Revenue Desk · Week of {dateLabel}</p>
+          <p className="mt-3 max-w-xs font-serif text-[14px] text-sub">
+            {flaggedCount} homes are news this week — the other ~{SILENT_HOME_COUNT} are fine.
+            Read them bit by bit, one part a day.
+          </p>
 
           <Link
             href={ctaHref}
-            className="shadow-desktop mt-8 w-full max-w-xs rounded-xl bg-red px-6 py-4 text-center font-sans text-[16px] font-semibold text-white"
+            className="mt-8 flex w-full max-w-xs flex-col gap-3 rounded-2xl bg-ink px-6 py-6 text-left transition-transform hover:-translate-y-0.5"
           >
-            News updates →
+            <p className="kicker">Monday · The Pulse</p>
+            <p className="font-display text-lg font-semibold text-paper">
+              {pulse?.headline ?? "This week's edition"}
+            </p>
+            <span className="mt-1 inline-flex w-fit items-center gap-2 rounded-lg bg-red px-4 py-2 font-sans text-sm font-semibold text-white">
+              Read now →
+            </span>
           </Link>
 
           <p className="mt-4 flex items-center gap-2 font-sans text-[13px] text-sub">
@@ -106,6 +124,11 @@ export default async function HomeBasePage() {
             />
             {mondayLive ? "Monday's section is live" : "This week's edition opens Monday"}
           </p>
+
+          <p className="mono-label mt-10 font-mono text-[11px] text-muted">This week&apos;s edition</p>
+          <div className="mt-3 w-full max-w-xs">
+            <DayGrid days={days} />
+          </div>
 
           <div className="mt-10 flex w-full max-w-xs flex-col gap-3">
             <PushNotificationManager />
@@ -132,8 +155,8 @@ export default async function HomeBasePage() {
             Good morning, {unit.name}
           </h1>
           <p className="mt-1 max-w-xl font-serif text-base text-sub">
-            23 homes are news this week — the other ~790 are fine. Read them bit by bit, one part a
-            day.
+            {flaggedCount} homes are news this week — the other ~{SILENT_HOME_COUNT} are fine.
+            Read them bit by bit, one part a day.
           </p>
 
           <Link

@@ -17,7 +17,7 @@ export function Masthead({
       >
         ← Home base
       </Link>
-      <div className="flex items-baseline justify-between font-mono text-[11px] tracking-wide text-muted uppercase">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 font-mono text-[11px] tracking-wide text-muted uppercase">
         <span>{unitName}</span>
         <span>Vol. XII · Week {weekNumber}</span>
       </div>

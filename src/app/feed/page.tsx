@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { getSession } from "@/lib/session";
 import { getUnit } from "@/lib/units";
 import {
@@ -28,8 +27,15 @@ export default async function FrontPage() {
   const edition = await getCurrentEdition(session.unitId);
   if (!edition) redirect("/home");
 
-  const pace = await getReaderPace(session.userId, edition.id);
+  const [pace, homes, calls, pulse, alreadySent] = await Promise.all([
+    getReaderPace(session.userId, edition.id),
+    getFlaggedHomes(edition.id),
+    getSignedCalls(edition.id),
+    getPulse(edition.id),
+    hasSentToTeam(edition.id),
+  ]);
   if (!pace) redirect("/onboarding/pace");
+  if (!pulse) redirect("/home");
 
   const days = getDayStates(getEditionMonday(edition), pace);
   const monday = getEditionMonday(edition);
@@ -39,14 +45,6 @@ export default async function FrontPage() {
     day: "numeric",
     year: "numeric",
   });
-
-  const [homes, calls, pulse, alreadySent] = await Promise.all([
-    getFlaggedHomes(edition.id),
-    getSignedCalls(edition.id),
-    getPulse(edition.id),
-    hasSentToTeam(edition.id),
-  ]);
-  if (!pulse) redirect("/home");
 
   const flaggedCount = homes.length;
 
@@ -59,15 +57,17 @@ export default async function FrontPage() {
           <DayTabs days={days} activeDay={1} />
         </div>
 
-        {/* Mobile feed (P7) */}
-        <div className="mt-6 flex flex-col gap-8 lg:hidden">
-          <Link href="/feed/pulse" className="block rounded-2xl border border-card-line bg-white p-5">
-            <Kicker>Monday · The Pulse</Kicker>
-            <p className="mt-2 font-display text-[40px] font-bold text-ink">{pulse.number}</p>
-            <p className="mt-1 font-serif text-[15px] text-sub">{pulse.paragraph}</p>
-          </Link>
+        {/* Front Page — same content at every breakpoint, layout reflows for width */}
+        <div className="mt-6 lg:mt-10">
+          <Kicker>The Front Page · The Pulse</Kicker>
+          <h2 className="mt-2 max-w-4xl font-display text-[30px] leading-[1.1] font-bold text-ink lg:text-[46px] lg:leading-[1.05]">
+            {pulse.headline}
+          </h2>
+          <p className="mt-3 max-w-2xl font-serif text-base italic text-sub lg:text-lg">
+            {pulse.paragraph}
+          </p>
 
-          <div className="rounded-xl bg-warm-1 px-4 py-3 text-center">
+          <div className="mt-8 rounded-xl bg-warm-1 px-4 py-3 text-center lg:hidden">
             <p className="font-mono text-sm font-semibold text-ink">
               {flaggedCount} homes are news this week
             </p>
@@ -76,29 +76,8 @@ export default async function FrontPage() {
             </p>
           </div>
 
-          <MugShots homes={homes} totalCount={flaggedCount} />
-
-          <Link
-            href="/feed/signed-calls"
-            className="flex items-center justify-between rounded-xl border border-card-line bg-white px-5 py-4"
-          >
-            <span className="font-display text-lg font-semibold text-ink">
-              {calls.filter((c) => c.checkedDefault).length} calls to make today
-            </span>
-            <span className="text-ink">→</span>
-          </Link>
-        </div>
-
-        {/* Desktop broadsheet (D6) */}
-        <div className="mt-10 hidden lg:block">
-          <Kicker>The Front Page · The Pulse</Kicker>
-          <h2 className="mt-2 max-w-4xl font-display text-[46px] leading-[1.05] font-bold text-ink">
-            {pulse.headline}
-          </h2>
-          <p className="mt-3 max-w-2xl font-serif text-lg italic text-sub">{pulse.paragraph}</p>
-
-          <div className="mt-10 grid grid-cols-3 gap-12">
-            <div className="col-span-2 columns-2 gap-8 font-serif text-[15px] leading-relaxed text-ink [text-align:justify]">
+          <div className="mt-8 grid grid-cols-1 gap-8 lg:mt-10 lg:grid-cols-3 lg:gap-12">
+            <div className="flex flex-col gap-4 font-serif text-[15px] leading-relaxed text-ink lg:col-span-2 min-[900px]:block min-[900px]:columns-2 min-[900px]:gap-8 min-[900px]:[text-align:justify]">
               <p>
                 <span className="float-left mr-2 font-display text-[64px] leading-[0.8] font-bold text-ink">
                   T
@@ -121,9 +100,9 @@ export default async function FrontPage() {
               </p>
             </div>
 
-            <aside className="border-l border-line pl-8">
+            <aside className="border-t border-line pt-6 lg:border-l lg:border-t-0 lg:pt-0 lg:pl-8">
               <Kicker>The Pulse</Kicker>
-              <p className="mt-2 font-display text-[64px] leading-none font-bold text-ink">
+              <p className="mt-2 font-display text-[48px] leading-none font-bold text-ink lg:text-[64px]">
                 {pulse.number}
               </p>
               <div className="mt-5 flex flex-col gap-2">
@@ -137,7 +116,7 @@ export default async function FrontPage() {
             </aside>
           </div>
 
-          <div className="mt-14 grid grid-cols-2 gap-12 border-t border-line pt-10">
+          <div className="mt-10 grid grid-cols-1 gap-8 border-t border-line pt-8 lg:mt-14 lg:grid-cols-2 lg:gap-12 lg:pt-10">
             <MugShots homes={homes} totalCount={flaggedCount} />
 
             <section>

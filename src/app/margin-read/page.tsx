@@ -14,13 +14,15 @@ export default async function MarginReadPage() {
   const edition = await getCurrentEdition(session.unitId);
   if (!edition) redirect("/home");
 
-  const pace = await getReaderPace(session.userId, edition.id);
+  const [pace, marginRead] = await Promise.all([
+    getReaderPace(session.userId, edition.id),
+    getMarginRead(edition.id),
+  ]);
   if (!pace) redirect("/onboarding/pace");
+  if (!marginRead) redirect("/feed");
 
   const days = getDayStates(getEditionMonday(edition), pace);
   const wednesday = days[2];
-  const marginRead = await getMarginRead(edition.id);
-  if (!marginRead) redirect("/feed");
 
   return (
     <div className="min-h-screen bg-paper px-6 py-8">

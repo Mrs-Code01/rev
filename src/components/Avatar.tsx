@@ -25,7 +25,6 @@ export function Avatar({ avatarUrl, name, size = 96, editBadge = null }: AvatarP
             width={size}
             height={size}
             className="h-full w-full object-cover"
-            unoptimized
           />
         ) : (
           <span

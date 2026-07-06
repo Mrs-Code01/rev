@@ -10,7 +10,7 @@ const HREF_BY_DAY: Record<number, string> = {
 
 export function DayTabs({ days, activeDay }: { days: DayState[]; activeDay: number }) {
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-wrap gap-2">
       {days.map((d) => {
         const isActive = d.day === activeDay;
         if (!d.unlocked) {
